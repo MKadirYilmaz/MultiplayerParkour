@@ -6,27 +6,31 @@ public class NetworkManagerUI : MonoBehaviour
 {
     [SerializeField] GameObject UI_Camera;
 
-    [SerializeField] private Button serverButton;
-    [SerializeField] private Button clientButton;
-    [SerializeField] private Button hostButton;
-
-    private void Awake()
+    public void StartServer()
     {
-        serverButton.onClick.AddListener(() => {
-            Destroy(UI_Camera);
-            NetworkManager.Singleton.StartServer();
-            Destroy(gameObject);
-        });
-        clientButton.onClick.AddListener(() => {
-            Destroy(UI_Camera);
-            NetworkManager.Singleton.StartClient();
-            Destroy(gameObject);
-        });
-        hostButton.onClick.AddListener(() => {
-            Destroy(UI_Camera);
-            NetworkManager.Singleton.StartHost();
-            Destroy(gameObject);
-        });
+        Destroy(UI_Camera);
+        NetworkManager.Singleton.StartServer();
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        Destroy(gameObject);
+    }
+
+    public void StartClient()
+    {
+        Destroy(UI_Camera);
+        NetworkManager.Singleton.StartClient();
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        Destroy(gameObject);
+    }
+
+    public void StartHost()
+    {
+        Destroy(UI_Camera);
+        NetworkManager.Singleton.StartHost();
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        Destroy(gameObject);
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created

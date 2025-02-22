@@ -2,9 +2,10 @@ using NUnit.Framework;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using Unity.Netcode;
 
 [RequireComponent(typeof(PlayerMovement))]
-public class WallrunSystem : MonoBehaviour
+public class WallrunSystem : NetworkBehaviour
 {
     [Header("Setup")]
     [SerializeField] private LayerMask wallLayer;
@@ -52,6 +53,8 @@ public class WallrunSystem : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(!IsOwner)
+            return;
         if(pMovement.IsGrounded())
             canWallrunSameSide = true;
         

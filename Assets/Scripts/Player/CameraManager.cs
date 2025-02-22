@@ -1,6 +1,7 @@
+using Unity.Netcode;
 using UnityEngine;
 
-public class CameraManager : MonoBehaviour
+public class CameraManager : NetworkBehaviour
 {
     [SerializeField] private Transform cameraTarget;
 

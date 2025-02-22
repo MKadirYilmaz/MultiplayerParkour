@@ -1,9 +1,11 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Unity.Netcode;
 
 
 [RequireComponent(typeof(PlayerManager), typeof(Rigidbody))]
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : NetworkBehaviour
 {
     #region Attributes
     [Header("Setup")]
@@ -51,6 +53,7 @@ public class PlayerMovement : MonoBehaviour
         Crouching
     }
     public MovementState moveState = MovementState.Walking;
+    public Coroutine StandUpCoroutine;
 
     #endregion
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -82,15 +85,38 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(!IsOwner)
+            return;
         HandleRotation();
         StateMachine();
     }
 
     void FixedUpdate()
     {
+        if(!IsOwner)
+            return;
         HandleMovement();
     }
 
+    private IEnumerator HandleStandUp()
+    {
+        while(moveState == MovementState.Crouching || moveState == MovementState.Sliding)
+        {
+            Ray ray = new Ray(transform.position, transform.up);
+            if(Physics.Raycast(ray, 1.7f, groundLayer))
+            {
+                Debug.Log("Player cant stand up!");
+                yield return null;
+            }
+            else
+            {
+                isPressingCrouch = false;
+                transform.localScale = new Vector3(1, 1, 1);
+                yield return null;
+            }
+        } 
+    }
+ 
     private void StateMachine()
     {
         if(IsGrounded())
@@ -101,7 +127,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 moveState = CanSlide() ? MovementState.Sliding : MovementState.Crouching;
             }
-            else
+            else 
             {
                 moveState = isPressingRun ? MovementState.Running : MovementState.Walking;
             }
@@ -188,17 +214,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void EndCrouching()
     {
-        
-        Ray ray = new Ray(transform.position, transform.up);
-        if(Physics.Raycast(ray, 1.1f, groundLayer))
-        {
-            
-        }
-        else
-        {
-            transform.localScale = new Vector3(1, 1, 1);
-            isPressingCrouch = false;
-        }
+        StandUpCoroutine = StartCoroutine(HandleStandUp());
     }
 
     private void Jump()

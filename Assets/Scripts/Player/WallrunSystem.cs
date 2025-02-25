@@ -17,6 +17,7 @@ public class WallrunSystem : NetworkBehaviour
     [SerializeField] private float minVelocityToFall = 0.5f;
 
     private PlayerMovement pMovement;
+    private PlayerManager pManager;
     private RaycastHit rightHitInfo;
     private RaycastHit leftHitInfo;
 
@@ -47,13 +48,14 @@ public class WallrunSystem : NetworkBehaviour
     void Start()
     {
         pMovement = GetComponent<PlayerMovement>();
+        pManager = GetComponent<PlayerManager>();
         pMovement.OnJumpTrigger += WallJump;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(!IsOwner)
+        if(!IsOwner && pManager.gameManager.gameMode == GameManager.GameMode.Multiplayer)
             return;
         if(pMovement.IsGrounded())
             canWallrunSameSide = true;
@@ -185,7 +187,6 @@ public class WallrunSystem : NetworkBehaviour
                     StartWallrun();
                 }
             }
-            
         }
     }
     private void WallJump()

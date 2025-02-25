@@ -85,7 +85,7 @@ public class PlayerMovement : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(!IsOwner)
+        if(!IsOwner && pManager.gameManager.gameMode == GameManager.GameMode.Multiplayer)
             return;
         HandleRotation();
         StateMachine();
@@ -93,7 +93,7 @@ public class PlayerMovement : NetworkBehaviour
 
     void FixedUpdate()
     {
-        if(!IsOwner)
+        if(!IsOwner && pManager.gameManager.gameMode == GameManager.GameMode.Multiplayer)
             return;
         HandleMovement();
     }
